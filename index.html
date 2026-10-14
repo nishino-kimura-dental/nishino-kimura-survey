@@ -669,7 +669,6 @@
 
   var PICK_COUNT     = 3;   // 毎回出題する評価問題の数
   var GOOD_THRESHOLD = 4;   // 平均がこの値以上なら Google 口コミへ誘導
-  var RESET_SECONDS  = 30;  // 結果画面から自動リセットするまでの秒数
   var IDLE_SECONDS   = 90;  // 回答途中で放置された場合にトップへ戻す秒数
 
   /* ============================================================
@@ -745,7 +744,6 @@
   var submitted = false;
 
   var advanceTimer = null;
-  var resetTimer = null;
   var idleTimer = null;
 
   /* ============================================================
@@ -763,9 +761,8 @@
 
   function clearTimers() {
     clearTimeout(advanceTimer);
-    clearTimeout(resetTimer);
     clearTimeout(idleTimer);
-    advanceTimer = resetTimer = idleTimer = null;
+    advanceTimer = idleTimer = null;
   }
 
   function show(screen) {
@@ -1035,9 +1032,6 @@
     }
 
     show(el.done);
-    // 画面には出さず、院内キオスク利用時に次の患者さま向けへ自動で
-    // トップへ戻すためだけのタイマー
-    resetTimer = setTimeout(goTop, RESET_SECONDS * 1000);
   }
 
   /* ============================================================

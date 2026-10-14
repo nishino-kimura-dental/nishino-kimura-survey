@@ -1066,6 +1066,11 @@
         'Google に口コミを書く';
       el.doneActions.appendChild(a);
 
+      var hint = document.createElement('p');
+      hint.className = 'qr-note';
+      hint.textContent = '書き終えたら、ブラウザの「戻る」またはタブ切り替えでこの画面にお戻りください。この画面がうまく出ない場合は、もう一度QRコードを読み込んでいただければ同じ画面に戻れます。';
+      el.doneActions.appendChild(hint);
+
     } else {
       el.doneMark.classList.add('is-quiet');
       el.doneIcon.setAttribute('d', 'M12 3v12M12 19.5v.5');

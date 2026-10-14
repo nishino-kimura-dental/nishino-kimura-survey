@@ -1,0 +1,1146 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>西野きむら歯科 満足度アンケート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+
+<style>
+  /* hidden属性を確実に非表示にする（author CSSのdisplay指定より優先させる） */
+  [hidden] { display: none !important; }
+
+  /* ===============================================================
+     西野きむら歯科 患者満足度アンケート
+     =============================================================== */
+
+  :root {
+    --navy-900: #6B3322;
+    --navy-800: #4A2218;
+    --navy-600: #7A4A38;
+    --navy-400: #9A6A58;
+    --navy-200: #E8D5CE;
+    --brass:    #6DB843;
+    --brass-so: #D8EFCC;
+
+    --ground:   #F5FAF0;
+    --surface:  #FFFFFF;
+    --surface-2:#EEF7E8;
+
+    --good:     #5AB52A;
+    --good-so:  #D8EFCC;
+
+    --lift: 0 2px 4px rgba(60,30,15,.05), 0 14px 34px rgba(60,30,15,.10);
+
+    --fs-title:  clamp(30px, 4.6vw, 50px);
+    --fs-q:      clamp(26px, 3.8vw, 42px);
+    --fs-body:   clamp(18px, 2.1vw, 23px);
+    --fs-btn:    clamp(20px, 2.4vw, 27px);
+    --fs-label:  clamp(13px, 1.5vw, 17px);
+
+    --font-display: "M PLUS Rounded 1c", "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+    --font-body: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--navy-800);
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    line-height: 1.75;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button, .star, .choice {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--brass);
+    outline-offset: 3px;
+  }
+
+  .app {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    background: var(--navy-900);
+    color: #FFFFFF;
+    border-bottom: 3px solid var(--brass);
+    padding-block: clamp(12px, 1.8vh, 20px);
+    padding-inline: clamp(16px, 3vw, 40px);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(19px, 2.4vw, 26px);
+    letter-spacing: .06em;
+    margin: 0;
+    color: #FFFFFF;
+  }
+
+  .wordmark .sub {
+    display: block;
+    font-family: "Noto Sans JP", sans-serif;
+    font-weight: 400;
+    font-size: clamp(12px, 1.3vw, 15px);
+    letter-spacing: .16em;
+    color: #E8C8B8;
+    margin-top: 2px;
+  }
+
+  .topbar-note {
+    font-size: clamp(13px, 1.4vw, 16px);
+    color: #E8C8B8;
+    letter-spacing: .04em;
+  }
+
+  .stage {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-block: clamp(18px, 3.5vh, 44px);
+    padding-inline: clamp(16px, 3vw, 40px);
+    overflow-y: auto;
+  }
+
+  .card {
+    background: var(--surface);
+    border-radius: 20px;
+    box-shadow: var(--lift);
+    width: 100%;
+    max-width: 880px;
+    padding-block: clamp(28px, 5vh, 56px);
+    padding-inline: clamp(20px, 4vw, 56px);
+  }
+
+  .screen { display: none; }
+  .screen.is-active { display: block; animation: rise .32s ease both; }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .start { text-align: center; }
+
+  .start h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-title);
+    line-height: 1.4;
+    text-wrap: balance;
+    margin: 0 0 18px;
+    color: var(--navy-800);
+  }
+
+  .start p {
+    margin: 0 auto 10px;
+    max-width: 30em;
+    color: var(--navy-600);
+  }
+
+  .meta-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    margin: 26px 0 34px;
+  }
+
+  .meta-chip {
+    background: var(--surface-2);
+    border: 1px solid var(--navy-200);
+    border-radius: 999px;
+    padding: 7px 18px;
+    font-size: clamp(14px, 1.6vw, 18px);
+    color: var(--navy-600);
+    font-weight: 500;
+  }
+
+  .btn {
+    font-family: var(--font-body);
+    font-size: var(--fs-btn);
+    font-weight: 700;
+    letter-spacing: .04em;
+    border: none;
+    border-radius: 14px;
+    padding: clamp(16px, 2.4vh, 24px) clamp(32px, 6vw, 64px);
+    cursor: pointer;
+    transition: transform .12s ease, background-color .18s ease;
+    min-height: 68px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    text-align: center;
+  }
+
+  .btn-primary {
+    background: var(--navy-800);
+    color: #FFFFFF;
+    box-shadow: 0 6px 0 #2E1008;
+  }
+
+  .btn-primary:active { transform: translateY(4px); box-shadow: 0 2px 0 #2E1008; }
+
+  .btn-review {
+    background: var(--good);
+    color: #FFFFFF;
+    box-shadow: 0 6px 0 #3D8018;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    text-decoration: none;
+    width: 100%;
+    font-size: clamp(28px, 9vw, 36px);
+    padding: 26px 32px;
+    min-height: 88px;
+  }
+
+  .btn-review:active { transform: translateY(4px); box-shadow: 0 2px 0 #3D8018; }
+
+  .gift-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 22px;
+    background: var(--surface);
+    border: 2px solid var(--navy-200);
+    border-radius: 16px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: clamp(20px, 6vw, 25px);
+    color: var(--navy-600);
+    cursor: pointer;
+    padding: 20px 28px;
+    min-height: 72px;
+  }
+
+  .gift-link:active { background: var(--surface-2); }
+
+  .gift-icon { width: 44px; height: 44px; }
+
+  .gift-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(22px, 6.5vw, 28px);
+    line-height: 1.5;
+    margin: 0 0 14px;
+    color: var(--navy-800);
+  }
+
+  .gift-text {
+    font-size: clamp(18px, 5vw, 22px);
+    line-height: 1.8;
+    color: var(--navy-600);
+    margin: 0;
+  }
+
+  .gift-note {
+    margin-top: 30px;
+    font-size: clamp(13px, 3.6vw, 15px);
+    color: var(--navy-400);
+  }
+
+  .btn-quiet {
+    background: transparent;
+    color: var(--navy-400);
+    font-family: "Noto Sans JP", sans-serif;
+    font-weight: 500;
+    font-size: clamp(16px, 1.8vw, 20px);
+    border: 1px solid var(--navy-200);
+    border-radius: 12px;
+    padding: 12px 24px;
+    min-height: 52px;
+    cursor: pointer;
+  }
+
+  .btn-quiet:active { background: var(--surface-2); }
+
+  .q-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: clamp(18px, 3vh, 30px);
+  }
+
+  .q-count {
+    font-size: var(--fs-label);
+    font-weight: 700;
+    letter-spacing: .14em;
+    color: var(--navy-400);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dots { display: flex; gap: 9px; }
+
+  .dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--navy-200);
+    transition: background-color .25s ease, transform .25s ease;
+  }
+
+  .dot.is-done { background: var(--navy-400); }
+  .dot.is-now  { background: var(--brass); transform: scale(1.35); }
+
+  .q-text {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-q);
+    line-height: 1.45;
+    text-wrap: balance;
+    margin: 0 0 clamp(6px, 1vh, 12px);
+    color: var(--navy-800);
+  }
+
+  .q-hint {
+    margin: 0 0 clamp(20px, 3.5vh, 36px);
+    font-size: clamp(15px, 1.7vw, 19px);
+    color: var(--navy-400);
+  }
+
+  .stars {
+    display: flex;
+    justify-content: space-between;
+    gap: clamp(4px, 1.2vw, 16px);
+    margin-bottom: 14px;
+  }
+
+  .star {
+    flex: 1 1 0;
+    background: none;
+    border: none;
+    padding: 6px 0 4px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    border-radius: 12px;
+    transition: background-color .15s ease;
+  }
+
+  .star svg {
+    width: clamp(48px, 10.5vw, 92px);
+    height: auto;
+    max-width: 100%;
+    fill: var(--brass-so);
+    stroke: #B8DDA2;
+    stroke-width: 1.5;
+    transition: fill .18s ease, stroke .18s ease, transform .18s cubic-bezier(.2,1.5,.5,1);
+  }
+
+  .star.is-on svg {
+    fill: var(--brass);
+    stroke: #4E9A28;
+    transform: scale(1.06);
+  }
+
+  .star-caption {
+    font-size: var(--fs-label);
+    font-weight: 500;
+    color: var(--navy-400);
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .star.is-picked .star-caption { color: var(--navy-800); font-weight: 700; }
+
+  .scale-ends {
+    display: none;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--navy-400);
+  }
+
+  .choices {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(10px, 1.6vw, 18px);
+  }
+
+  .choice {
+    background: var(--surface-2);
+    border: 2px solid var(--navy-200);
+    border-radius: 16px;
+    color: var(--navy-800);
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: var(--fs-btn);
+    padding: clamp(22px, 4vh, 40px) 8px;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, transform .12s ease;
+  }
+
+  .choice.is-on {
+    background: var(--navy-800);
+    border-color: var(--navy-800);
+    color: #FFFFFF;
+  }
+
+  .choice:active { transform: translateY(3px); }
+
+  .free-field {
+    width: 100%;
+    min-height: clamp(130px, 22vh, 210px);
+    border: 2px solid var(--navy-200);
+    border-radius: 14px;
+    background: var(--surface-2);
+    color: var(--navy-800);
+    font-family: inherit;
+    font-size: clamp(18px, 2.1vw, 24px);
+    line-height: 1.7;
+    padding: 18px 20px;
+    resize: none;
+  }
+
+  .free-field::placeholder { color: #B89A8E; }
+  .free-field:focus { background: var(--surface); border-color: var(--navy-400); outline: none; }
+
+  .q-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: clamp(20px, 3.5vh, 34px);
+  }
+
+  .q-foot .spacer { flex: 1; }
+
+  .done { text-align: center; }
+
+  .done-mark {
+    width: 84px;
+    height: 84px;
+    margin: 0 auto 22px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--good-so);
+  }
+
+  .done-mark.is-quiet { background: var(--surface-2); }
+
+  .done-mark svg { width: 42px; height: 42px; }
+
+  .done h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-title);
+    line-height: 1.4;
+    text-wrap: balance;
+    margin: 0 0 16px;
+    color: var(--navy-800);
+  }
+
+  .done p {
+    margin: 0 auto 12px;
+    max-width: 28em;
+    color: var(--navy-600);
+    font-size: clamp(21px, 6.5vw, 26px);
+    line-height: 1.8;
+  }
+
+  .done-actions { margin-top: 34px; }
+
+  .countdown {
+    margin-top: 34px;
+    padding-top: 22px;
+    border-top: 1px solid var(--navy-200);
+  }
+
+  .countdown-text {
+    font-size: clamp(14px, 1.6vw, 17px);
+    color: var(--navy-400);
+    font-variant-numeric: tabular-nums;
+    margin: 0 0 10px;
+  }
+
+  .countdown-track {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--navy-200);
+    overflow: hidden;
+  }
+
+  .countdown-fill {
+    height: 100%;
+    width: 100%;
+    background: var(--brass);
+    transform-origin: left center;
+  }
+
+  .staff-link {
+    display: inline-block;
+    margin-top: 30px;
+    padding-top: 18px;
+    border: none;
+    border-top: 1px solid var(--navy-200);
+    background: none;
+    color: var(--navy-400);
+    font-family: var(--font-body);
+    font-size: clamp(13px, 1.4vw, 15px);
+    letter-spacing: .02em;
+    cursor: pointer;
+  }
+
+  .staff-link:active { color: var(--navy-600); }
+
+  .qr-card { text-align: center; }
+
+  .qr-eyebrow {
+    margin: 0 0 10px;
+    font-size: var(--fs-label);
+    font-weight: 700;
+    letter-spacing: .14em;
+    color: var(--navy-400);
+  }
+
+  .qr-card h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-title);
+    line-height: 1.4;
+    text-wrap: balance;
+    margin: 0 0 28px;
+    color: var(--navy-800);
+  }
+
+  .qr-box {
+    width: fit-content;
+    margin: 0 auto 28px;
+    padding: 20px;
+    background: #FFFFFF;
+    border: 2px solid var(--navy-200);
+    border-radius: 18px;
+    box-shadow: var(--lift);
+    line-height: 0;
+  }
+
+  .qr-note {
+    margin: 0 auto 30px;
+    max-width: 26em;
+    color: var(--navy-600);
+  }
+
+  @media (max-width: 560px) {
+    .star-caption { display: none; }
+    .scale-ends { display: flex; }
+    .choices { grid-template-columns: 1fr; }
+    .btn { width: 100%; }
+    .q-foot .btn-quiet { width: 100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .001ms !important;
+      transition-duration: .001ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="topbar">
+    <h1 class="wordmark">
+      西野きむら歯科
+      <span class="sub">NISHINO KIMURA DENTAL CLINIC</span>
+    </h1>
+    <span class="topbar-note">患者さま満足度アンケート</span>
+  </header>
+
+  <main class="stage">
+    <!-- ===== トップ画面 ===== -->
+    <section id="screen-start" class="screen is-active" aria-label="アンケート開始">
+      <div class="card start">
+        <h2>本日はご来院<br>ありがとうございました</h2>
+        <p>よりよい診療のために、皆さまのお声をお聞かせください。</p>
+        <p>回答は匿名です。診療内容には影響いたしません。</p>
+
+        <div class="meta-row">
+          <span class="meta-chip">全4問</span>
+          <span class="meta-chip">約30秒</span>
+          <span class="meta-chip">タップで回答</span>
+        </div>
+
+        <button type="button" id="btn-start" class="btn btn-primary">アンケートを始める</button>
+
+        <button type="button" id="btn-show-qr" class="staff-link">スタッフ用：QRコードを表示する</button>
+      </div>
+    </section>
+
+    <!-- ===== 設問画面（1問ずつ差し替え） ===== -->
+    <section id="screen-question" class="screen" aria-label="設問">
+      <div class="card">
+        <div class="q-head">
+          <span class="q-count" id="q-count">質問 1 / 4</span>
+          <div class="dots" id="dots" aria-hidden="true"></div>
+        </div>
+
+        <h2 class="q-text" id="q-text">　</h2>
+        <p class="q-hint" id="q-hint">　</p>
+
+        <div id="q-body"></div>
+
+        <div class="q-foot">
+          <button type="button" id="btn-back" class="btn-quiet">← ひとつ前へ</button>
+          <span class="spacer"></span>
+          <button type="button" id="btn-submit" class="btn btn-primary" hidden>回答を送信する</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 結果画面 ===== -->
+    <section id="screen-done" class="screen" aria-label="回答完了">
+      <div class="card done">
+        <div id="done-main">
+          <div class="done-mark" id="done-mark">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path id="done-icon" d="M20 6.5 9.5 17 4 11.5" fill="none" stroke="#3D8018" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </div>
+
+          <h2 id="done-title">　</h2>
+          <p id="done-text">　</p>
+
+          <div class="done-actions" id="done-actions"></div>
+
+          <button type="button" id="btn-gift-link" class="gift-link">プレゼントを受け取る方はこちら</button>
+        </div>
+
+        <div id="done-gift" hidden>
+          <div class="done-mark" style="background:var(--good-so)">
+            <svg class="gift-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="9" width="18" height="11" rx="1.2" fill="none" stroke="#3D8018" stroke-width="2"></rect>
+              <rect x="2" y="5.5" width="20" height="4" rx="1" fill="none" stroke="#3D8018" stroke-width="2"></rect>
+              <line x1="12" y1="5.5" x2="12" y2="20" stroke="#3D8018" stroke-width="2"></line>
+            </svg>
+          </div>
+          <p class="gift-title">本日のご来院の記念品をご用意しております</p>
+          <p class="gift-text">このページをスタッフにご提示ください。</p>
+          <p class="gift-note" id="gift-note">　</p>
+        </div>
+
+        <div class="countdown">
+          <p class="countdown-text" id="countdown-text">あと30秒で最初の画面に戻ります</p>
+          <div class="countdown-track"><div class="countdown-fill" id="countdown-fill"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== QRコード表示画面（受付タブレットに掲示し、患者さまご自身のスマホで読み取る） ===== -->
+    <section id="screen-qr" class="screen" aria-label="QRコード表示">
+      <div class="card qr-card">
+        <p class="qr-eyebrow">スマートフォンでご回答いただけます</p>
+        <h2>QRコードを読み取ってください</h2>
+        <div class="qr-box" id="qr-box"></div>
+        <p class="qr-note">カメラを起動してQRコードにかざすと、ご自身のスマートフォンでアンケートページが開きます。</p>
+        <button type="button" id="btn-qr-back" class="btn-quiet">受付画面に戻る（スタッフ用）</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ============================================================
+     設定 — ここだけ書き換えれば運用を変えられます
+     ============================================================ */
+
+  // アンケートの公開URL（GitHub Pages）。QRコードの読み取り先。
+  // ファイルとして開いたとき（file:///…）はこのURLをQRに使う。
+  var SURVEY_URL = 'https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPO_NAME/';
+
+  // Google 口コミ投稿ページの URL
+  var GOOGLE_REVIEW_URL = 'https://g.page/r/CfQhpETSLQN9EAE/review';
+
+  // 回答をGoogleスプレッドシートに記録するためのApps Script ウェブアプリURL
+  // （スプレッドシートへの記録だけを行う、裏側専用のエンドポイント）。
+  // 画面には何も表示させず、裏側で一瞬だけ記録用のリクエストを送るだけ
+  // （fetchのレスポンスは読み取らない「投げっぱなし」方式）。
+  var SHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyvwJX3-ZtUStwJhhfKii1ncanqGtNKY_paIwfO9-ZZUG-Nop23IROW4n_Q8UN9n00j/exec';
+
+  // 上記ウェブアプリ側に設定したトークンと同じ文字列にすること。
+  // いたずら・誤爆防止の簡易チェック用で、強固なセキュリティではありません。
+  var SHEET_TOKEN = 'nishino-kimura-2026';
+
+  var PICK_COUNT     = 3;   // 毎回出題する評価問題の数
+  var GOOD_THRESHOLD = 4;   // 平均がこの値以上なら Google 口コミへ誘導
+  var RESET_SECONDS  = 30;  // 結果画面から自動リセットするまでの秒数
+  var IDLE_SECONDS   = 90;  // 回答途中で放置された場合にトップへ戻す秒数
+
+  /* ============================================================
+     設問
+     ============================================================ */
+
+  var RATING_QUESTIONS = [
+    { id: 'q1', text: '本日の診療の満足度は？',            type: 'star' },
+    { id: 'q2', text: 'スタッフの対応はいかがでしたか？',   type: 'star' },
+    { id: 'q3', text: '待ち時間はいかがでしたか？',        type: 'star' },
+    { id: 'q4', text: '院内の雰囲気・清潔感はいかがでしたか？', type: 'star' },
+    { id: 'q5', text: '治療の説明はわかりやすかったですか？', type: 'star' },
+    {
+      id: 'q6',
+      text: 'またご来院いただけますか？',
+      type: 'choice',
+      options: [
+        { label: 'はい',       score: 5 },
+        { label: 'たぶん',     score: 3 },
+        { label: 'わからない', score: 2 }
+      ]
+    }
+  ];
+
+  var FREE_QUESTION = {
+    id: 'free',
+    text: 'ご意見・ご感想があればお聞かせください',
+    type: 'text'
+  };
+
+  var STAR_CAPTIONS = ['不満', 'やや不満', 'ふつう', '満足', '大変満足'];
+
+  var STAR_PATH = 'M12 2.6l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.62l-5.88 3.09 1.12-6.55L2.48 9.52l6.58-.96z';
+
+  /* ============================================================
+     要素
+     ============================================================ */
+
+  var el = {
+    start:        document.getElementById('screen-start'),
+    question:     document.getElementById('screen-question'),
+    done:         document.getElementById('screen-done'),
+    btnStart:     document.getElementById('btn-start'),
+    btnBack:      document.getElementById('btn-back'),
+    btnSubmit:    document.getElementById('btn-submit'),
+    qCount:       document.getElementById('q-count'),
+    dots:         document.getElementById('dots'),
+    qText:        document.getElementById('q-text'),
+    qHint:        document.getElementById('q-hint'),
+    qBody:        document.getElementById('q-body'),
+    doneMark:     document.getElementById('done-mark'),
+    doneIcon:     document.getElementById('done-icon'),
+    doneTitle:    document.getElementById('done-title'),
+    doneText:     document.getElementById('done-text'),
+    doneActions:  document.getElementById('done-actions'),
+    doneMain:     document.getElementById('done-main'),
+    doneGift:     document.getElementById('done-gift'),
+    btnGiftLink:  document.getElementById('btn-gift-link'),
+    giftNote:     document.getElementById('gift-note'),
+    cdText:       document.getElementById('countdown-text'),
+    cdFill:       document.getElementById('countdown-fill'),
+    qr:           document.getElementById('screen-qr'),
+    qrBox:        document.getElementById('qr-box'),
+    btnShowQr:    document.getElementById('btn-show-qr'),
+    btnQrBack:    document.getElementById('btn-qr-back')
+  };
+
+  /* ============================================================
+     状態
+     ============================================================ */
+
+  var sheet = [];
+  var answers = {};
+  var index = 0;
+  var submitted = false;
+
+  var advanceTimer = null;
+  var resetTimer = null;
+  var idleTimer = null;
+
+  /* ============================================================
+     補助
+     ============================================================ */
+
+  function shuffle(list) {
+    var a = list.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function clearTimers() {
+    clearTimeout(advanceTimer);
+    clearTimeout(resetTimer);
+    clearTimeout(idleTimer);
+    advanceTimer = resetTimer = idleTimer = null;
+  }
+
+  function show(screen) {
+    [el.start, el.question, el.done, el.qr].forEach(function (s) {
+      s.classList.toggle('is-active', s === screen);
+    });
+  }
+
+  function touchIdle() {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(goTop, IDLE_SECONDS * 1000);
+  }
+
+  /* ============================================================
+     回答の記録（Googleスプレッドシート／Apps Script）
+
+     画面には一切出さず、裏側で一度だけ記録用のリクエストを投げる。
+     レスポンスは読み取らない「投げっぱなし」（fetchのno-corsモード）。
+     お礼／口コミ誘導／プレゼント引換の画面は、すべてこのページ自身が
+     その場で表示する（Apps Script側はスプレッドシートへの記録だけを行う）。
+     ============================================================ */
+
+  function recordAnswer(positive) {
+    if (!SHEET_WEBHOOK_URL) return;
+
+    var params = [
+      'token=' + encodeURIComponent(SHEET_TOKEN),
+      'average=' + encodeURIComponent(Math.round(averageScore() * 10) / 10),
+      'positive=' + (positive ? '1' : '0'),
+      'free=' + encodeURIComponent(answers[FREE_QUESTION.id] || '')
+    ];
+
+    sheet.forEach(function (q) {
+      if (q.type !== 'text' && typeof answers[q.id] === 'number') {
+        params.push(q.id + '=' + encodeURIComponent(answers[q.id]));
+      }
+    });
+
+    try {
+      fetch(SHEET_WEBHOOK_URL + '?' + params.join('&'), { mode: 'no-cors' });
+    } catch (err) {
+      // 記録に失敗しても、患者さまには通常どおりお礼画面を見せる
+    }
+  }
+
+  /* ============================================================
+     画面：トップ
+     ============================================================ */
+
+  function goTop() {
+    clearTimers();
+    sheet = [];
+    answers = {};
+    index = 0;
+    submitted = false;
+    el.cdFill.style.transition = 'none';
+    el.cdFill.style.transform = 'scaleX(1)';
+    show(el.start);
+    el.btnStart.focus({ preventScroll: true });
+  }
+
+  function beginSurvey() {
+    answers = {};
+    index = 0;
+    sheet = shuffle(RATING_QUESTIONS).slice(0, PICK_COUNT).concat([FREE_QUESTION]);
+    renderQuestion();
+    show(el.question);
+    touchIdle();
+  }
+
+  /* ============================================================
+     画面：設問
+     ============================================================ */
+
+  function renderQuestion() {
+    var q = sheet[index];
+
+    el.qCount.textContent = '質問 ' + (index + 1) + ' / ' + sheet.length;
+    el.qText.textContent = q.text;
+    el.qBody.innerHTML = '';
+
+    el.dots.innerHTML = '';
+    for (var i = 0; i < sheet.length; i++) {
+      var d = document.createElement('span');
+      d.className = 'dot' + (i < index ? ' is-done' : (i === index ? ' is-now' : ''));
+      el.dots.appendChild(d);
+    }
+
+    el.btnBack.hidden = (index === 0);
+    el.btnSubmit.hidden = (q.type !== 'text');
+
+    if (q.type === 'star')   { el.qHint.textContent = '星をタップしてお選びください'; renderStars(q); }
+    if (q.type === 'choice') { el.qHint.textContent = '近いものをお選びください';     renderChoices(q); }
+    if (q.type === 'text')   { el.qHint.textContent = '入力は任意です。このまま送信していただいても構いません'; renderFreeText(q); }
+  }
+
+  function renderStars(q) {
+    var wrap = document.createElement('div');
+    wrap.className = 'stars';
+    wrap.setAttribute('role', 'radiogroup');
+    wrap.setAttribute('aria-label', q.text);
+
+    var buttons = [];
+
+    for (var n = 1; n <= 5; n++) {
+      (function (score) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'star';
+        b.id = q.id + '-star-' + score;
+        b.setAttribute('role', 'radio');
+        b.setAttribute('aria-checked', 'false');
+        b.setAttribute('aria-label', '5段階中 ' + score + '・' + STAR_CAPTIONS[score - 1]);
+        b.innerHTML =
+          '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + STAR_PATH + '"></path></svg>' +
+          '<span class="star-caption">' + STAR_CAPTIONS[score - 1] + '</span>';
+
+        b.addEventListener('click', function () {
+          paintStars(buttons, score);
+          answer(q.id, score);
+        });
+
+        buttons.push(b);
+        wrap.appendChild(b);
+      })(n);
+    }
+
+    var ends = document.createElement('div');
+    ends.className = 'scale-ends';
+    ends.innerHTML = '<span>' + STAR_CAPTIONS[0] + '</span><span>' + STAR_CAPTIONS[4] + '</span>';
+
+    el.qBody.appendChild(wrap);
+    el.qBody.appendChild(ends);
+
+    if (typeof answers[q.id] === 'number') paintStars(buttons, answers[q.id]);
+  }
+
+  function paintStars(buttons, score) {
+    buttons.forEach(function (b, i) {
+      b.classList.toggle('is-on', i < score);
+      b.classList.toggle('is-picked', i === score - 1);
+      b.setAttribute('aria-checked', i === score - 1 ? 'true' : 'false');
+    });
+  }
+
+  function renderChoices(q) {
+    var wrap = document.createElement('div');
+    wrap.className = 'choices';
+    wrap.setAttribute('role', 'radiogroup');
+    wrap.setAttribute('aria-label', q.text);
+
+    q.options.forEach(function (opt) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'choice';
+      b.id = q.id + '-opt-' + opt.score;
+      b.textContent = opt.label;
+      b.setAttribute('role', 'radio');
+      b.setAttribute('aria-checked', answers[q.id] === opt.score ? 'true' : 'false');
+      if (answers[q.id] === opt.score) b.classList.add('is-on');
+
+      b.addEventListener('click', function () {
+        Array.prototype.forEach.call(wrap.children, function (c) {
+          c.classList.remove('is-on');
+          c.setAttribute('aria-checked', 'false');
+        });
+        b.classList.add('is-on');
+        b.setAttribute('aria-checked', 'true');
+        answer(q.id, opt.score);
+      });
+
+      wrap.appendChild(b);
+    });
+
+    el.qBody.appendChild(wrap);
+  }
+
+  function renderFreeText(q) {
+    var ta = document.createElement('textarea');
+    ta.className = 'free-field';
+    ta.id = 'free-text';
+    ta.setAttribute('aria-label', q.text);
+    ta.placeholder = '例）受付の方の説明がとても丁寧でした。';
+    ta.value = answers[q.id] || '';
+    ta.addEventListener('input', function () {
+      answers[q.id] = ta.value;
+      touchIdle();
+    });
+    el.qBody.appendChild(ta);
+  }
+
+  function answer(id, score) {
+    answers[id] = score;
+    touchIdle();
+    clearTimeout(advanceTimer);
+    advanceTimer = setTimeout(next, 480);
+  }
+
+  function next() {
+    if (index < sheet.length - 1) {
+      index++;
+      renderQuestion();
+      el.question.classList.remove('is-active');
+      void el.question.offsetWidth;
+      el.question.classList.add('is-active');
+    } else {
+      finish();
+    }
+  }
+
+  function back() {
+    clearTimeout(advanceTimer);
+    if (index === 0) return;
+    index--;
+    renderQuestion();
+    touchIdle();
+  }
+
+  /* ============================================================
+     画面：結果
+     ============================================================ */
+
+  function averageScore() {
+    var sum = 0, count = 0;
+    sheet.forEach(function (q) {
+      if (q.type === 'text') return;
+      if (typeof answers[q.id] === 'number') { sum += answers[q.id]; count++; }
+    });
+    return count ? sum / count : 0;
+  }
+
+  function finish() {
+    clearTimeout(idleTimer);
+    var positive = averageScore() >= GOOD_THRESHOLD;
+    recordAnswer(positive);
+    showDoneScreen(positive);
+  }
+
+  function showDoneScreen(positive) {
+    el.doneActions.innerHTML = '';
+    el.doneMain.hidden = false;
+    el.doneGift.hidden = true;
+
+    if (positive) {
+      el.doneMark.classList.remove('is-quiet');
+      el.doneIcon.setAttribute('d', 'M20 6.5 9.5 17 4 11.5');
+      el.doneIcon.setAttribute('stroke', '#3D8018');
+      el.doneTitle.textContent = 'ありがとうございます！';
+      el.doneText.textContent = 'よろしければ Google でもご感想をお聞かせください。他の患者さまの医院選びの参考になります。';
+
+      var a = document.createElement('a');
+      a.id = 'btn-review';
+      a.className = 'btn btn-review';
+      a.href = GOOGLE_REVIEW_URL;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.innerHTML =
+        '<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true">' +
+        '<path d="' + STAR_PATH + '" fill="#FFFFFF"></path></svg>' +
+        'Google に口コミを書く';
+      el.doneActions.appendChild(a);
+
+    } else {
+      el.doneMark.classList.add('is-quiet');
+      el.doneIcon.setAttribute('d', 'M12 3v12M12 19.5v.5');
+      el.doneIcon.setAttribute('stroke', '#9A6A58');
+      el.doneTitle.textContent = '貴重なご意見ありがとうございました';
+      el.doneText.textContent = 'いただいたお声は、より良い医院づくりに活かしてまいります。';
+    }
+
+    show(el.done);
+    startCountdown();
+  }
+
+  function startCountdown() {
+    var remaining = RESET_SECONDS;
+    el.cdText.textContent = 'あと' + remaining + '秒で最初の画面に戻ります';
+
+    el.cdFill.style.transition = 'none';
+    el.cdFill.style.transform = 'scaleX(1)';
+    void el.cdFill.offsetWidth;
+    el.cdFill.style.transition = 'transform ' + RESET_SECONDS + 's linear';
+    el.cdFill.style.transform = 'scaleX(0)';
+
+    (function tick() {
+      resetTimer = setTimeout(function () {
+        remaining--;
+        if (remaining <= 0) { goTop(); return; }
+        el.cdText.textContent = 'あと' + remaining + '秒で最初の画面に戻ります';
+        tick();
+      }, 1000);
+    })();
+  }
+
+  /* ============================================================
+     起動
+     ============================================================ */
+
+  el.btnStart.addEventListener('click', beginSurvey);
+  el.btnBack.addEventListener('click', back);
+  el.btnSubmit.addEventListener('click', function () {
+    // 連打による二重送信（スプレッドシートへの重複記録）を防ぐ
+    if (submitted) return;
+    submitted = true;
+
+    var ta = document.getElementById('free-text');
+    if (ta) answers[FREE_QUESTION.id] = ta.value;
+
+    finish();
+  });
+
+  el.btnGiftLink.addEventListener('click', function () {
+    el.doneMain.hidden = true;
+    el.doneGift.hidden = false;
+    el.giftNote.textContent = new Date().toLocaleString('ja-JP', {
+      year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+    });
+  });
+
+  el.question.addEventListener('pointerdown', touchIdle);
+
+  // 受付タブレット用：このページ自身のURLをQRコード化。
+  // ネット上で表示中はそのURL、OneDrive等からファイルとして開いたとき
+  // （file:///…）だけ公開URLを使う
+  var qrUrl = /^https?:/.test(window.location.href) ? window.location.href : SURVEY_URL;
+
+  if (window.QRCode && el.qrBox) {
+    new QRCode(el.qrBox, {
+      text: qrUrl,
+      width: 220,
+      height: 220,
+      colorDark: '#4A2218',
+      colorLight: '#FFFFFF',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+  el.btnShowQr.addEventListener('click', function () { clearTimers(); show(el.qr); });
+  el.btnQrBack.addEventListener('click', goTop);
+
+  goTop();
+})();
+</script>
+</body>
+</html>

@@ -992,10 +992,53 @@
     return count ? sum / count : 0;
   }
 
+  /* ============================================================
+     本日の回答済み状態（1人1回・同じ端末での再送信/再表示防止）
+
+     匿名アンケートのため個人の識別はできないが、同じスマホで同日中に
+     何度も回答してプレゼントを受け取れてしまうのを簡易的に防ぐ。
+     また、別タブでGoogleの口コミ画面を開いて戻ってきたときに
+     モバイルブラウザがこのタブを裏で再読み込みしてしまうことがあり、
+     その際もお礼画面（プレゼント導線含む）に復帰できるようにする。
+     localStorageが使えない環境（プライベートブラウズ等）では、
+     何も保存されず毎回普通にアンケートに答えられるだけで、害はない。
+     ============================================================ */
+
+  var DONE_STORAGE_KEY = 'nkd-survey-done';
+
+  function todayStr() {
+    var d = new Date();
+    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  }
+
+  function saveDoneState(positive) {
+    try {
+      localStorage.setItem(DONE_STORAGE_KEY, JSON.stringify({
+        date: todayStr(),
+        positive: positive
+      }));
+    } catch (err) {
+      // 保存できなくても患者さまの操作には影響させない
+    }
+  }
+
+  function loadDoneState() {
+    try {
+      var raw = localStorage.getItem(DONE_STORAGE_KEY);
+      if (!raw) return null;
+      var data = JSON.parse(raw);
+      if (data && data.date === todayStr()) return data;
+    } catch (err) {
+      // 読み込めない場合は未回答として扱う
+    }
+    return null;
+  }
+
   function finish() {
     clearTimeout(idleTimer);
     var positive = averageScore() >= GOOD_THRESHOLD;
     recordAnswer(positive);
+    saveDoneState(positive);
     showDoneScreen(positive);
   }
 
@@ -1079,7 +1122,14 @@
   el.btnShowQr.addEventListener('click', function () { clearTimers(); show(el.qr); });
   el.btnQrBack.addEventListener('click', goTop);
 
-  goTop();
+  var doneToday = loadDoneState();
+  if (doneToday) {
+    // 本日すでに回答済み。タブ切り替え等での再読み込みでも、
+    // トップ画面に戻さずさっきのお礼/口コミ誘導/プレゼント画面に復帰させる
+    showDoneScreen(doneToday.positive);
+  } else {
+    goTop();
+  }
 })();
 </script>
 </body>

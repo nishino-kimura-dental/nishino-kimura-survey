@@ -474,33 +474,6 @@
 
   .done-actions { margin-top: 34px; }
 
-  .countdown {
-    margin-top: 34px;
-    padding-top: 22px;
-    border-top: 1px solid var(--navy-200);
-  }
-
-  .countdown-text {
-    font-size: clamp(14px, 1.6vw, 17px);
-    color: var(--navy-400);
-    font-variant-numeric: tabular-nums;
-    margin: 0 0 10px;
-  }
-
-  .countdown-track {
-    height: 6px;
-    border-radius: 999px;
-    background: var(--navy-200);
-    overflow: hidden;
-  }
-
-  .countdown-fill {
-    height: 100%;
-    width: 100%;
-    background: var(--brass);
-    transform-origin: left center;
-  }
-
   .staff-link {
     display: inline-block;
     margin-top: 30px;
@@ -652,11 +625,6 @@
           <p class="gift-text">このページをスタッフにご提示ください。</p>
           <p class="gift-note" id="gift-note">　</p>
         </div>
-
-        <div class="countdown">
-          <p class="countdown-text" id="countdown-text">あと30秒で最初の画面に戻ります</p>
-          <div class="countdown-track"><div class="countdown-fill" id="countdown-fill"></div></div>
-        </div>
       </div>
     </section>
 
@@ -761,8 +729,6 @@
     doneGift:     document.getElementById('done-gift'),
     btnGiftLink:  document.getElementById('btn-gift-link'),
     giftNote:     document.getElementById('gift-note'),
-    cdText:       document.getElementById('countdown-text'),
-    cdFill:       document.getElementById('countdown-fill'),
     qr:           document.getElementById('screen-qr'),
     qrBox:        document.getElementById('qr-box'),
     btnShowQr:    document.getElementById('btn-show-qr'),
@@ -855,8 +821,6 @@
     answers = {};
     index = 0;
     submitted = false;
-    el.cdFill.style.transition = 'none';
-    el.cdFill.style.transform = 'scaleX(1)';
     show(el.start);
     el.btnStart.focus({ preventScroll: true });
   }
@@ -1071,27 +1035,9 @@
     }
 
     show(el.done);
-    startCountdown();
-  }
-
-  function startCountdown() {
-    var remaining = RESET_SECONDS;
-    el.cdText.textContent = 'あと' + remaining + '秒で最初の画面に戻ります';
-
-    el.cdFill.style.transition = 'none';
-    el.cdFill.style.transform = 'scaleX(1)';
-    void el.cdFill.offsetWidth;
-    el.cdFill.style.transition = 'transform ' + RESET_SECONDS + 's linear';
-    el.cdFill.style.transform = 'scaleX(0)';
-
-    (function tick() {
-      resetTimer = setTimeout(function () {
-        remaining--;
-        if (remaining <= 0) { goTop(); return; }
-        el.cdText.textContent = 'あと' + remaining + '秒で最初の画面に戻ります';
-        tick();
-      }, 1000);
-    })();
+    // 画面には出さず、院内キオスク利用時に次の患者さま向けへ自動で
+    // トップへ戻すためだけのタイマー
+    resetTimer = setTimeout(goTop, RESET_SECONDS * 1000);
   }
 
   /* ============================================================
